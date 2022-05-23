@@ -3,41 +3,42 @@
 #include <windows.h>
 using namespace std;
 
-bool gameOver;
-const int width = 20;
-const int height = 20;
+bool isGameOver;
+const int w = 20;
+const int h = 20;
+
 int x, y, foodX, foodY, score;
-int tailX[100], tailY[100];
-int nTail;
+int snakeX[100], snakeY[100];
+int nsnake;
 
 
-enum eDirecton
+enum eDirection
 {
     STOP = 0,
     LEFT, RIGHT, UP, DOWN
 };
-eDirecton dir;
+eDirection dir;
 
 void Start()
 {
-	gameOver = false;
+	isGameOver = false;
 	dir = STOP;
-	x = width / 2;
-	y = height / 2;
-	foodX = rand() % width;
-	foodY = rand() % height;
+	x = w/2;
+	y = h/2;
+	foodX = rand()%w;
+	foodY = rand()%h;
 	score = 0;
 }
-void InitMap()
+void DrawMap()
 {
 	system("cls"); //system("clear");
-	for (int i = 0; i < width+2; i++)
+	for (int i = 0; i < w+2; i++)
 		cout << "#";
 	cout << endl;
 
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < h; i++)
 	{
-		for (int j = 0; j < width; j++)
+		for (int j = 0; j < w; j++)
 		{
 			if (j == 0)
 				cout << "#";
@@ -48,9 +49,9 @@ void InitMap()
 			else
 			{
 				bool print = false;
-				for (int k = 0; k < nTail; k++)
+				for (int k = 0; k < nsnake; k++)
 				{
-					if (tailX[k] == j && tailY[k] == i)
+					if (snakeX[k] == j && snakeY[k] == i)
 					{
 						cout << "o";
 						print = true;
@@ -61,13 +62,13 @@ void InitMap()
 			}
 
 
-			if (j == width - 1)
+			if (j == w-1)
 				cout << "#";
 		}
 		cout << endl;
 	}
 
-	for (int i = 0; i < width+2; i++)
+	for (int i = 0; i < w+2; i++)
 		cout << "#";
 	cout << endl;
 	cout << "Score:" << score << endl;
@@ -91,68 +92,64 @@ void KeyboardInput()
 			dir = DOWN;
 			break;
 		case 'x':
-			gameOver = true;
+			isGameOver = true;
 			break;
 		}
 	}
 }
-void GameLogic()
-{
-	int headX = tailX[0];
-	int headY = tailY[0];
-	int head2X, head2Y;
-	tailX[0] = x;
-	tailY[0] = y;
-	for (int i = 1; i < nTail; i++)
-	{
-		head2X = tailX[i];
-		head2Y = tailY[i];
-		tailX[i] = headX;
-		tailY[i] = headY;
-		headX = head2X;
-		headY = head2Y;
-	}
-	switch (dir)
-	{
-	case LEFT:
-		x--;
-		break;
-	case RIGHT:
-		x++;
-		break;
-	case UP:
-		y--;
-		break;
-	case DOWN:
-		y++;
-		break;
-	default:
-		break;
-	}
-	if (x > width || x < 0 || y > height || y < 0) gameOver = true;
-    for (int i = 0; i < nTail; i++)
-		if (tailX[i] == x && tailY[i] == y)
-			gameOver = true;
 
-	if (x == foodX && y == foodY)
-	{
-		score += 10;
-		foodX = rand() % width;
-		foodY = rand() % height;
-		nTail++;
-	}
-}
 int main()
 {
 	Start();
-	while (!gameOver)
+	while (!isGameOver)
 	{
-		InitMap();
+		DrawMap();
 		KeyboardInput();
-		GameLogic();
-		Sleep(10);
-	}
+		int prevX = snakeX[0];
+        int prevY = snakeY[0];
+        int prev2X, prev2Y;
+        snakeX[0] = x;
+        snakeY[0] = y;
+        for (int i = 1; i < nsnake; i++)
+        {
+            prev2X = snakeX[i];
+            prev2Y = snakeY[i];
+            snakeX[i] = prevX;
+            snakeY[i] = prevY;
+            prevX = prev2X;
+            prevY = prev2Y;
+        }
+        switch (dir)
+        {
+        case UP:
+            y--;
+            break;
+        case DOWN:
+            y++;
+            break;
+        case LEFT:
+            x--;
+            break;
+        case RIGHT:
+            x++;
+            break;
+        default:
+            break;
+        }
+        if (x > w || x < 0 || y > h || y < 0) isGameOver = true;
+        for (int i = 0; i < nsnake; i++)
+            if (snakeX[i] == x && snakeY[i] == y)
+                isGameOver = true;
 
-	cout << "GAME OVER" << endl;
+        if (x == foodX && y == foodY)
+        {
+            score += 10;
+            foodX = rand()%w;
+            foodY = rand()%h;
+            nsnake++;
+        }
+            Sleep(10);
+        }
+    cout << "\n GAME OVER" << endl;
 	return 0;
 }
