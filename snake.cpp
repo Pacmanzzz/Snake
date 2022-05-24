@@ -4,6 +4,9 @@
 using namespace std;
 
 bool isGameOver;
+bool isNormal;
+bool begiN;
+
 const int w = 20;
 const int h = 20;
 
@@ -94,12 +97,42 @@ void KeyboardInput()
 		case 'x':
 			isGameOver = true;
 			break;
+        case '1':
+            isNormal = true;
+            begiN = true;
+            break;
+        case '2':
+            isNormal = false;
+            begiN = true;
+            break;
 		}
 	}
 }
 
+void Menu() {
+    system("cls");
+    cout << "#" << endl;
+}
+
 int main()
 {
+    begiN = false;
+    while(!begiN) {
+        system("cls");
+        cout << "###################" << endl
+             << "#                 #" << endl
+             << "#                 #" << endl
+             << "#                 #" << endl
+             << "#      SNAKE      #" << endl
+             << "#   1. Normal     #" << endl
+             << "#   2. Infinite   #" << endl
+             << "#                 #" << endl
+             << "#                 #" << endl
+             << "#                 #" << endl
+             << "###################" << endl;
+         KeyboardInput();
+         Sleep(10);
+    }
 	Start();
 	while (!isGameOver)
 	{
@@ -121,25 +154,33 @@ int main()
         }
         switch (dir)
         {
-        case UP:
-            y--;
-            break;
-        case DOWN:
-            y++;
-            break;
-        case LEFT:
-            x--;
-            break;
-        case RIGHT:
-            x++;
-            break;
-        default:
-            break;
+            case UP:
+                y--;
+                break;
+            case DOWN:
+                y++;
+                break;
+            case LEFT:
+                x--;
+                break;
+            case RIGHT:
+                x++;
+                break;
+            default:
+                break;
         }
-        if (x > w || x < 0 || y > h || y < 0) isGameOver = true;
-        for (int i = 0; i < nsnake; i++)
+        if(isNormal == true)
+        {
+            if (x > w || x < 0 || y > h || y < 0) isGameOver = true;
+            for (int i = 0; i < nsnake; i++)
             if (snakeX[i] == x && snakeY[i] == y)
                 isGameOver = true;
+        }
+        else
+        {
+        if (x >= w) x = 0; else if (x < 0) x = w - 1;
+        if (y >= h) y = 0; else if (y < 0) y = h - 1;
+        }
 
         if (x == foodX && y == foodY)
         {
